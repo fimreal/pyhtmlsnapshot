@@ -1,12 +1,13 @@
 # -*- coding:utf-8 -*-
 
 import tempfile
+import asyncio
 from os.path import realpath, exists
 from pyppeteer import launch
 # from base64 import decode as bs64decode
 
 
-class HTMLConverter:
+class AHTMLConverter:
     def __init__(self, launch_options={}):
         self.launch_options = launch_options
 
@@ -55,22 +56,50 @@ class HTMLConverter:
             } | render_options
         return await page.screenshot(**render_options)
 
-    async def from_url(self, url:str, *args, goto_options={}, **kwargs):
+    async def from_url(self, url: str, *args, goto_options={}, **kwargs):
         page = await self.browser.newPage()
         await self.scrape_info(page, url, goto_options)
         out = await self._out_from_page(page, *args, **kwargs)
         await page.close()
         return out
 
-    async def from_file(self, file_path:str, *args, goto_options={}, **kwargs):
+    async def from_file(self, file_path: str, *args, goto_options={}, **kwargs):
         url = "file://" + realpath(file_path)
         return await self.from_url(url, args=args, goto_options=goto_options, kwargs=kwargs)
 
-    async def from_string(self, content:str, *args, goto_options={}, **kwargs):
+    async def from_string(self, content: str, *args, goto_options={}, **kwargs):
         with tempfile.NamedTemporaryFile(suffix=".html", delete=True) as f:
             f.write(content.encode())
             f.flush()
             return await self.from_file(file_path=f.name, args=args, goto_options=goto_options, kwargs=kwargs)
+
+
+class HTMLConverter:
+    def __init__(self, launch_options={}):
+        self.converter = AHTMLConverter(launch_options)
+        try:
+            asyncio.get_event_loop().run_until_complete(self.converter.init())
+        except RuntimeError:
+            asyncio.set_event_loop((loop := asyncio.new_event_loop()))
+            loop.run_until_complete(self.converter.init())
+
+    def __del__(self):
+        asyncio.get_event_loop().run_until_complete(self.converter.finish())
+
+    def from_file(self, *args, **kwargs):
+        return asyncio.get_event_loop().run_until_complete(
+            self.converter.from_file(*args, **kwargs)
+        )
+
+    def from_url(self, *args, **kwargs):
+        return asyncio.get_event_loop().run_until_complete(
+            self.converter.from_url(*args, **kwargs)
+        )
+
+    def from_string(self, *args, **kwargs):
+        return asyncio.get_event_loop().run_until_complete(
+            self.converter.from_string(*args, **kwargs)
+        )
 
 
 def from_url(origin: str, outfile=None,
