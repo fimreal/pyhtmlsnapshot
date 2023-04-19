@@ -6,7 +6,7 @@ authors = ["fimreal <lmr@epurs.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = "^3"
 pyppeteer = "^1.0.2"
 
 
