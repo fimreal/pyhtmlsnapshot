@@ -3,7 +3,7 @@
 import tempfile
 from os.path import realpath, exists
 from pyppeteer import launch
-from base64 import decode as bs64decode
+# from base64 import decode as bs64decode
 
 
 class HTMLConverter:
@@ -83,5 +83,5 @@ def from_url(origin: str, outfile=None,
     if exists(origin):
         return converter.from_file(origin, outfile, goto_options, render_options)
     if origin != "":
-        content = str(bs64decode(origin))
-        return converter.from_string(content, outfile, goto_options, render_options)
+        # origin = str(bs64decode(origin))
+        return converter.from_string(origin, outfile, goto_options, render_options)
