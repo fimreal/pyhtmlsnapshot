@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "pyhtmlsnapshot"
+version = "0.1.0"
+description = "Capture web page as image/pdf with python pyppeteer"
+authors = ["fimreal <lmr@epurs.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+pyppeteer = "^1.0.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
