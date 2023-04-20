@@ -56,22 +56,22 @@ class AHTMLConverter:
             } | render_options
         return await page.screenshot(**render_options)
 
-    async def from_url(self, url: str, *args, goto_options={}, **kwargs):
+    async def from_url(self, url: str, *args, goto_options={}, render_options={}):
         page = await self.browser.newPage()
         await self.scrape_info(page, url, goto_options)
-        out = await self._out_from_page(page, *args, **kwargs)
+        out = await self._out_from_page(page, *args, render_options=render_options)
         await page.close()
         return out
 
-    async def from_file(self, file_path: str, *args, goto_options={}, **kwargs):
+    async def from_file(self, file_path: str, *args, goto_options={}, render_options={}):
         url = "file://" + realpath(file_path)
-        return await self.from_url(url, args=args, goto_options=goto_options, kwargs=kwargs)
+        return await self.from_url(url, args=args, goto_options=goto_options, render_options=render_options)
 
-    async def from_string(self, content: str, *args, goto_options={}, **kwargs):
+    async def from_string(self, content: str, *args, goto_options={}, render_options={}):
         with tempfile.NamedTemporaryFile(suffix=".html", delete=True) as f:
             f.write(content.encode())
             f.flush()
-            return await self.from_file(file_path=f.name, args=args, goto_options=goto_options, kwargs=kwargs)
+            return await self.from_file(file_path=f.name, args=args, goto_options=goto_options, render_options=render_options)
 
 
 class HTMLConverter:
@@ -86,23 +86,23 @@ class HTMLConverter:
     def __del__(self):
         asyncio.get_event_loop().run_until_complete(self.converter.finish())
 
-    def from_file(self, *args, goto_options,**kwargs):
+    def from_file(self, *args, goto_options,render_options):
         return asyncio.get_event_loop().run_until_complete(
-            self.converter.from_file(*args,goto_options, **kwargs)
+            self.converter.from_file(*args,goto_options, render_options)
         )
 
-    def from_url(self, *args,goto_options, **kwargs):
+    def from_url(self, *args,goto_options, render_options):
         return asyncio.get_event_loop().run_until_complete(
-            self.converter.from_url(*args, goto_options,**kwargs)
+            self.converter.from_url(*args, goto_options,render_options)
         )
 
-    def from_string(self, *args,goto_options, **kwargs):
+    def from_string(self, *args,goto_options, render_options):
         return asyncio.get_event_loop().run_until_complete(
-            self.converter.from_string(*args, goto_options,**kwargs)
+            self.converter.from_string(*args, goto_options,render_options)
         )
 
 
-def from_url(origin: str, outfile=None,
+def snapshot(origin: str, outfile=None,
              launch_options={},
              goto_options={},
              render_options={}):
