@@ -56,7 +56,7 @@ from pyhtmlsnapshot import snapshot
 snapshot("https://www.baidu.com", "baidu.pdf")
 
 # file
-snapshot("file:///some_static_web.html", "file.pdf")
+snapshot("some_exist_static_web.html", "file.pdf")
 
 # string content
 html='''<!DOCTYPE html>
