@@ -42,7 +42,8 @@ with open("output.jpg","wb") as file:
 ```python
 from pyhtmlsnapshot import snapshot
 
-pdf = snapshot("https://www.baidu.com")
+# 没有超时时间，渲染完成后等待 5s
+pdf = snapshot("https://www.baidu.com", timeout=0, waittime=5000)
 
 snapshot("https://www.baidu.com", "baidu.pdf")
 ```
