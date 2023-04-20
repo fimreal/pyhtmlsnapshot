@@ -4,11 +4,13 @@ Capture web page as image/pdf with python pyppeteer
 
 # usage
 
+#### installation
+
 ```bash
 pip install git+https://github.com/fimreal/pyhtmlsnapshot.git
 ```
 
-## use pyhtmlsnapshot in debian container [docker.io/library/python:3.9]
+#### pyhtmlsnapshot in debian container [docker.io/library/python:3.9]
 
 ```bash
 # wget -qO- https://epurs.com/i/debian | mirror=aliyun sh -
@@ -27,13 +29,12 @@ pip install git+https://github.com/fimreal/pyhtmlsnapshot.git
 ```python
 from pyhtmlsnapshot import snapshot
 
-img = snapshot("https://www.baidu.com")
-
-with open("output.jpg","wb") as file:
-    file.write(img)
+snapshot("https://www.baidu.com", "baidu.jpg")
 
 # or
-snapshot("https://www.baidu.com", "baidu.jpg")
+img = snapshot("https://www.baidu.com")
+with open("output.jpg","wb") as file:
+    file.write(img)
 ```
 
 #### save as pdf
