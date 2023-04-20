@@ -86,31 +86,31 @@ class HTMLConverter:
     def __del__(self):
         asyncio.get_event_loop().run_until_complete(self.converter.finish())
 
-    def from_file(self, *args, goto_options={},render_options={}):
+    def from_url(self, url: str, *args, goto_options={}, render_options={}):
         return asyncio.get_event_loop().run_until_complete(
-            self.converter.from_file(args,goto_options, render_options)
+            self.converter.from_url(args, goto_options, render_options)
         )
 
-    def from_url(self, *args,goto_options={}, render_options={}):
+    def from_file(self, file_path: str, *args, goto_options={}, render_options={}):
         return asyncio.get_event_loop().run_until_complete(
-            self.converter.from_url(args, goto_options,render_options)
+            self.converter.from_file(args, goto_options, render_options)
         )
 
-    def from_string(self, *args,goto_options={}, render_options={}):
+    def from_string(self, content: str, *args, goto_options={}, render_options={}):
         return asyncio.get_event_loop().run_until_complete(
-            self.converter.from_string(args, goto_options,render_options)
+            self.converter.from_string(args, goto_options, render_options)
         )
 
 
-def snapshot(origin: str, outfile=None,
+def snapshot(origin: str, *args,
              launch_options={},
              goto_options={},
              render_options={}):
     converter = HTMLConverter(launch_options)
     if origin.startswith("http"):
-        return converter.from_url(origin, outfile, goto_options=goto_options, render_options=render_options)
+        return converter.from_url(origin, args, goto_options, render_options)
     if exists(origin):
-        return converter.from_file(origin, outfile, goto_options=goto_options, render_options=render_options)
+        return converter.from_file(origin, args, goto_options, render_options)
     if origin != "":
         # origin = str(bs64decode(origin))
-        return converter.from_string(origin, outfile, goto_options=goto_options, render_options=render_options)
+        return converter.from_string(origin, args, goto_options, render_options)
